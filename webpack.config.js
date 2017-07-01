@@ -4,13 +4,13 @@ module.exports = {
   context: __dirname,
   entry: "./frontend/publishers_wiki.jsx",
   output: {
-    path: path.resolve(__dirname),
+    path: path.join(__dirname, 'app', 'assets', 'javascripts'),
     filename: "bundle.js"
   },
   module: {
     loaders: [
       {
-        test: /\.jsx?$/,
+        test: [/\.jsx?$/, /\.js?$/],
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: {
