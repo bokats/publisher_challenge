@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
-  root 'static_pages#root'
+  namespace :api, defaults: { format: :json } do
+    resources :publishers, only: [:index]
+  end
 
+  root 'static_pages#root'
 end
