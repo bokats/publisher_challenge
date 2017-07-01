@@ -40,6 +40,8 @@ class Api::PublishersController < ApplicationController
                 has_equal_sign = true
               end
               values[item] = parse_value(info_array[sub_idx], item, has_equal_sign)
+            elsif item == 'editor'
+              values[item] = parse_value(info_array[idx], item)
             end
           end
         end
