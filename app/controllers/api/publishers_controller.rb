@@ -2,8 +2,8 @@ require 'byebug'
 
 class Api::PublishersController < ApplicationController
   def index
-    publishers = 'Popular_Science|PC_Magazine|TechCrunch|Gizmodo|The_Verge|GeekWire'
-    # publishers = 'TechCrunch'
+    # publishers = 'Popular_Science|PC_Magazine|TechCrunch|Gizmodo|The_Verge|GeekWire'
+    publishers = 'Popular_Science'
     response = HTTParty.get("https://en.wikipedia.org/w/api.php?action=query&titles=#{publishers}&prop=revisions&rvprop=content&format=json")
     result = find_values(response)
   end
@@ -14,7 +14,7 @@ class Api::PublishersController < ApplicationController
     final_result = []
 
     items = ['logo', 'image_file', 'type', 'editor', 'owner', 'url', 'website',
-      'launch date', 'launch_date', 'author']
+      'launch date', 'launch_date', 'firstdate', 'author', 'founded']
     pages = response['query']['pages'].keys
 
     pages.each do |page|
@@ -22,7 +22,7 @@ class Api::PublishersController < ApplicationController
       info_array = response['query']['pages'][page]['revisions'][0]['*'].split("|")
       values['name'] = response['query']['pages'][page]['title']
       idx = 0
-      while values.keys.length < items.length - 2 && idx < 30
+      while values.keys.length < 8 && idx < 40
         items.each do |item|
           if info_array[idx][0...item.length + 1].include?(item)
             if item == 'logo' || item == 'image_file'
@@ -49,18 +49,41 @@ class Api::PublishersController < ApplicationController
                   values['website'] = parse_value(info_array[idx], 'url')
                 end
               end
-
+            elsif item == 'launch date' || item == 'launch_date' || item == 'firstdate' || item == 'founded'
+              values['launch_date'] = determine_launch_date(info_array, idx)
             elsif item == 'editor' || item == 'owner' || item == 'url'
               values[item] = parse_value(info_array[idx], item)
             end
           end
         end
+        p values
         idx += 1
       end
       final_result << values
     end
     debugger
     final_result
+  end
+
+  def determine_launch_date(info_array, idx)
+    idx += 1
+    while info_array[idx].to_i == 0
+      idx += 1
+    end
+    date = ''
+    count = 0
+    while count < 3
+      el = info_array[idx + count].split("}")[0]
+      if el[0].to_i > 0 || el[0] == "0"
+        if count == 0
+          date += el
+        else
+          date += ", #{el}"
+        end
+      end
+      count += 1
+    end
+    date
   end
 
   def parse_value(string, type, has_equal_sign = true)
