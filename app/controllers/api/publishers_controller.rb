@@ -3,16 +3,18 @@ require 'byebug'
 class Api::PublishersController < ApplicationController
   def index
     publishers = 'Popular_Science|PC_Magazine|TechCrunch|Gizmodo|The_Verge|GeekWire'
-    # publishers = 'Popular_Science'
+    # publishers = 'GeekWire'
     url = "https://en.wikipedia.org/w/api.php?action=query&titles=#{publishers}\
     &prop=revisions&rvprop=content&format=json"
 
     response = HTTParty.get(url)
 
     @items = ['logo', 'image_file', 'type', 'editor', 'owner', 'url', 'website',
-    'launch date', 'launch_date', 'firstdate', 'author', 'founded']
+              'launch date', 'launch_date', 'firstdate', 'author', 'founded',
+              'category', 'publisher', 'published']
 
-    @result = find_values(response.parsed_response)
+    @publishers = find_values(response.parsed_response)
+    debugger
   end
 
   private
@@ -34,22 +36,51 @@ class Api::PublishersController < ApplicationController
             case item
             when 'logo', 'image_file'
               determine_logo(info_array, idx, item)
-            when 'type'
+            when 'type', 'category'
               determine_type(info_array, idx)
             when 'url', 'website'
               determine_website(info_array, idx)
             when 'launch_date', "launch date", "firstdate", "founded"
               determine_launch_date(info_array, idx)
-            when 'editor', 'owner', 'author'
+            when 'owner', 'publisher'
+              @values['owner'] = parse_value(info_array[idx], item)
+            when 'published'
+              determine_publisher(info_array[idx])
+            when 'author'
+              determine_creator(info_array, idx)
+            when 'editor'
               @values[item] = parse_value(info_array[idx], item)
             end
           end
         end
         idx += 1
       end
+      check_for_missing
       final_result << @values
     end
     final_result
+  end
+
+  def check_for_missing
+    if @values.key?('creator')
+      @values['owner'] = @values['creator'] if !@values.key?('owner')
+      @values['editor'] = @values['creator'] if !@values.key?('editor')
+    end
+  end
+
+  def determine_creator(info_array, idx)
+    next_line = info_array[idx + 1].split("=")
+    if next_line[0] != 'page' && next_line[0] != 'title'
+      @values['creator'] = parse_value(info_array[idx], 'creator')
+    end
+  end
+
+  def determine_publisher(string)
+    parsed_result = string.gsub("\n", "")
+    parsed_result.delete!("[]}.")
+    parsed_result = parsed_result.split(" ")
+    parsed_result = parsed_result[2...4].join(" ")
+    @values['owner'] = parsed_result
   end
 
   def determine_logo(info_array, idx, item)
@@ -97,7 +128,7 @@ class Api::PublishersController < ApplicationController
         if count == 0
           date += el
         else
-          date += ", #{el}"
+          date += ",#{el}"
         end
       end
       count += 1
@@ -120,13 +151,12 @@ class Api::PublishersController < ApplicationController
         end
       when 'owner'
         parsed_result = parsed_result.split("<br>")
+        parsed_result = parsed_result.join(",")
       when 'url'
         parsed_result = parsed_result.split(" ")[0]
-      when 'author'
+      when 'creator'
         parsed_result = parsed_result.split("<br />")
-        if parsed_result.length > 1
-          parsed_result[1] = parsed_result[1].split("<")[0]
-        end
+        parsed_result = parsed_result.join(",")
       end
     end
     parsed_result
