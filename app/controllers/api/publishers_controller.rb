@@ -3,7 +3,7 @@ require 'byebug'
 class Api::PublishersController < ApplicationController
   def index
     publishers = 'Popular_Science|PC_Magazine|TechCrunch|Gizmodo|The_Verge|GeekWire'
-    # publishers = 'PC_Magazine'
+    # publishers = 'TechCrunch'
     response = HTTParty.get("https://en.wikipedia.org/w/api.php?action=query&titles=#{publishers}&prop=revisions&rvprop=content&format=json")
     result = find_values(response)
   end
@@ -13,7 +13,7 @@ class Api::PublishersController < ApplicationController
   def find_values(response)
     final_result = []
 
-    items = ['logo', 'image_file', 'type', 'editor', 'owner', 'url', 'website', \
+    items = ['logo', 'image_file', 'type', 'editor', 'owner', 'url', 'website',
       'launch date', 'launch_date', 'author']
     pages = response['query']['pages'].keys
 
@@ -40,7 +40,17 @@ class Api::PublishersController < ApplicationController
                 has_equal_sign = true
               end
               values[item] = parse_value(info_array[sub_idx], item, has_equal_sign)
-            elsif item == 'editor'
+            elsif item == 'url' || item == 'website'
+              if info_array[idx].include?("URL")
+                values['website'] = parse_value(info_array[idx + 1], 'url', false)
+              else
+                equals_idx = info_array[idx].index("=")
+                if info_array[idx][equals_idx + 1] == "["
+                  values['website'] = parse_value(info_array[idx], 'url')
+                end
+              end
+
+            elsif item == 'editor' || item == 'owner' || item == 'url'
               values[item] = parse_value(info_array[idx], item)
             end
           end
@@ -55,7 +65,7 @@ class Api::PublishersController < ApplicationController
 
   def parse_value(string, type, has_equal_sign = true)
     string.gsub!("\n", "")
-    string.delete!("[]")
+    string.delete!("[]}")
     if has_equal_sign
       string = string.split("=")[1]
       string = string[1..-1] if string[0] == " "
@@ -65,6 +75,10 @@ class Api::PublishersController < ApplicationController
         if type == 'image_file'
           string = "File:#{string}"
         end
+      elsif type == 'owner'
+        string = string.split("<br>")
+      elsif type == 'url'
+        string = string.split(" ")[0]
       end
     end
     string
