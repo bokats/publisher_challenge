@@ -2,8 +2,7 @@ require 'byebug'
 
 class Api::PublishersController < ApplicationController
   def index
-    publishers = 'Popular_Science|PC_Magazine|TechCrunch|Gizmodo|The_Verge|GeekWire'
-    # publishers = 'GeekWire'
+    publishers = params['publishers'].join("|")
     url = "https://en.wikipedia.org/w/api.php?action=query&titles=#{publishers}\
     &prop=revisions&rvprop=content&format=json"
 
@@ -14,7 +13,7 @@ class Api::PublishersController < ApplicationController
               'category', 'publisher', 'published']
 
     @publishers = find_values(response.parsed_response)
-    debugger
+    p @publishers
   end
 
   private
@@ -161,4 +160,5 @@ class Api::PublishersController < ApplicationController
     end
     parsed_result
   end
+
 end

@@ -1,6 +1,7 @@
-export const fetchPublishers = () => {
+export const fetchPublishers = (publishers) => {
   return $.ajax ({
     method: 'GET',
-    url: 'api/publishers'
+    url: 'api/publishers',
+    data: {publishers}
   });
 };
