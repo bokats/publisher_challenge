@@ -4,21 +4,21 @@ import { fetchPublishers } from '../util/publishers_api_util';
 class Publishers extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {info: []};
-    this.publishers = [];
+    this.state = {info: [], publishers: []};
   }
 
   componentDidMount() {
     if (localStorage.getItem('publishers')) {
-      this.publishers = localStorage.getItem('publishers').split(",");
+      this.setState({['publishers']:
+        localStorage.getItem('publishers').split(",")});
     }
-    if (this.publishers.length > 0) {
+    if (this.state.publishers.length > 0) {
       this.fetchPublishersInfo();
     }
   }
 
   fetchPublishersInfo() {
-    fetchPublishers(this.publishers).then(res =>
+    fetchPublishers(this.state.publishers).then(res =>
       this.setState({['info']: res}));
   }
 
@@ -32,7 +32,6 @@ class Publishers extends React.Component {
         newState = newState.split(",");
         let idx = newState.indexOf(publisher);
         newState.splice(idx, 1);
-        debugger;
       }
     } else {
       newState = `${publisher}`;
@@ -42,25 +41,27 @@ class Publishers extends React.Component {
 
   updatePublishers(publisher) {
     return e => {
-      if (this.publishers.includes(publisher)) {
-        let idx = this.publishers.indexOf(publisher);
-
-        this.publishers.splice(idx,1);
-
+      let newState = this.state.publishers;
+      if (this.state.publishers.includes(publisher)) {
+        let idx = this.state.publishers.indexOf(publisher);
+        newState.splice(idx,1);
         e.currentTarget.classList.remove('selected');
       } else {
-        this.publishers.push(publisher);
+        newState.push(publisher);
         e.currentTarget.classList.add('selected');
       }
+      this.setState({['publishers']: newState});
       this.updateLocalStorage(publisher);
-      if (this.publishers.length > 0) {
+      if (this.state.publishers.length > 0) {
         this.fetchPublishersInfo();
+      } else {
+        this.setState({['info']: []});
       }
     };
   }
 
   render() {
-    let result = "Nothing";
+    let result;
     if (this.state.info.length > 0) {
       result = this.state.info.map(publisher => {
         return (
@@ -78,7 +79,6 @@ class Publishers extends React.Component {
       });
     }
 
-    console.log(result);
     return (
       <div>
         <div>
