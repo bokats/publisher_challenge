@@ -1,3 +1,47 @@
 // Place all the styles related to the Api::Publishers controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+html {
+  height: 100%;
+}
+
+body {
+  font-family: Lato, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 18px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.publisher-buttons-container {
+  display: flex;
+  margin-top: 80px;
+  min-width: 1000px;
+  justify-content: space-between;
+}
+
+.select-button {
+  width: 120px;
+  height: 22px;
+  background-color: #287fb8;
+  border: 1px solid #287fb8;
+  border-radius: 3px;
+  color: white;
+  font-weight: bold;
+  line-height: 1.5;
+  padding: 8px 12px;
+  text-align: center;
+  cursor: pointer;
+  align-self: center;
+}
+
+.selected {
+  background-color: #0D47A1;
+  border: 1px solid #0D47A1;
+}
+
+.test {
+  background: url("https://upload.wikimedia.org/wikipedia/en/9/99/GeekWire-logo.png");
+  height: 200px;
+  width: 200px;
+}

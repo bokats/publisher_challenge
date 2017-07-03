@@ -8,12 +8,14 @@ class Publishers extends React.Component {
   }
 
   componentDidMount() {
+
+    let promise = new Promise((resolve, reject) => {
+      resolve(this.setState({['publishers']:
+        localStorage.getItem('publishers').split(",")}));
+    });
+
     if (localStorage.getItem('publishers')) {
-      this.setState({['publishers']:
-        localStorage.getItem('publishers').split(",")});
-    }
-    if (this.state.publishers.length > 0) {
-      this.fetchPublishersInfo();
+      promise.then(() => this.fetchPublishersInfo());
     }
   }
 
@@ -64,16 +66,20 @@ class Publishers extends React.Component {
     let result;
     if (this.state.info.length > 0) {
       result = this.state.info.map(publisher => {
+        let imageUrl = {
+          backgroundImage: `url(${publisher.logo})`
+        };
+        debugger;
         return (
-          <div key={publisher.name}>
-            <p>{publisher.name}</p>
-            <p>{publisher.logo}</p>
-            <p>{publisher.type}</p>
-            <p>{publisher.website}</p>
-            <p>{publisher.launch_date}</p>
-            <p>{publisher.editor}</p>
-            <p>{publisher.owner}</p>
-            <p>{publisher.creator}</p>
+          <div key={publisher.name} className='publisher-info-container'>
+            // <p>{publisher.name}</p>
+            <p className='test'></p>
+            // <p>{publisher.type}</p>
+            // <p>{publisher.website}</p>
+            // <p>{publisher.launch_date}</p>
+            // <p>{publisher.editor}</p>
+            // <p>{publisher.owner}</p>
+            // <p>{publisher.creator}</p>
           </div>
         );
       });
@@ -81,23 +87,23 @@ class Publishers extends React.Component {
 
     return (
       <div>
-        <div>
-          <div className='select_button'
+        <div className='publisher-buttons-container'>
+          <div className='select-button'
             onClick={this.updatePublishers('GeekWire')}>
             GeekWire</div>
-          <div className='select_button'
+          <div className='select-button'
             onClick={this.updatePublishers('Gizmodo')}>
             Gizmodo</div>
-          <div className='select_button'
+          <div className='select-button'
             onClick={this.updatePublishers('PC_Magazine')}>
             PC Magazine</div>
-          <div className='select_button'
+          <div className='select-button'
             onClick={this.updatePublishers('Popular_Science')}>
             Popular Science</div>
-          <div className='select_button'
+          <div className='select-button'
             onClick={this.updatePublishers('TechCrunch')}>
             TechCrunch</div>
-          <div className='select_button'
+          <div className='select-button'
             onClick={this.updatePublishers('The_Verge')}>
             The Verge</div>
         </div>

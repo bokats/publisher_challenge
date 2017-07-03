@@ -2,7 +2,8 @@ require 'byebug'
 
 class Api::PublishersController < ApplicationController
   def index
-    publishers = params['publishers'].join("|")
+    # publishers = params['publishers'].join("|")
+    publishers = "GeekWire|TechCrunch"
     url = "https://en.wikipedia.org/w/api.php?action=query&titles=#{publishers}\
     &prop=revisions&rvprop=content&format=json"
 
@@ -86,10 +87,17 @@ class Api::PublishersController < ApplicationController
     if !@values.key?('logo') && (info_array[idx].include?('.png') ||
       info_array[idx].include?('.svg'))
       image_dir = parse_value(info_array[idx], item)
-      name = @values['name'].gsub(" ", "_")
-      @values['logo'] =
-        "https://en.wikipedia.org/wiki/#{name}#/media/#{image_dir}"
+      url = "https://en.wikipedia.org/w/api.php?action=query&titles=\
+      #{image_dir}&prop=imageinfo&iiprop=url&format=json"
+      find_image_url(url)
     end
+  end
+
+  def find_image_url(url)
+    response = HTTParty.get(url)
+    page = response.parsed_response['query']['pages'].keys[0]
+    @values['logo'] = response.parsed_response['query']['pages'][page]\
+    ['imageinfo'][0]['url']
   end
 
   def determine_type(info_array, idx)
