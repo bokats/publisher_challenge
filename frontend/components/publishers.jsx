@@ -5,19 +5,33 @@ class Publishers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {info: [], publishers: []};
+    if (!localStorage.getItem('publishers')) {
+      localStorage.setItem('publishers', "");
+    }
   }
 
   componentDidMount() {
 
-    let promise = new Promise((resolve, reject) => {
-      resolve(this.setState({['publishers']:
-        localStorage.getItem('publishers').split(",")}));
+    let publishers = localStorage.getItem('publishers');
+    if (publishers.length < 1) {
+      publishers = [];
+    } else {
+      publishers = publishers.split(",");
+    }
+
+    let getDataFromLS = new Promise((resolve, reject) => {
+      resolve(this.setState({['publishers']: publishers})
+      );
     });
 
-    if (localStorage.getItem('publishers')) {
-      promise.then(() => {
-        this.fetchPublishersInfo();
-        this.updateSelectedClass();
+    let localS = localStorage.getItem('publishers');
+
+    if (publishers.length > 0) {
+      getDataFromLS.then(() => {
+        if (this.state.publishers.length > 0) {
+          this.fetchPublishersInfo();
+          this.updateSelectedClass();
+        }
       });
     }
   }
@@ -25,7 +39,6 @@ class Publishers extends React.Component {
   updateSelectedClass() {
     let selectedEl;
     let id;
-    debugger;
     for (let i = 0; i < this.state.publishers.length; i++) {
       selectedEl = document.getElementById(`${this.state.publishers[i]}`);
       selectedEl.classList.add('selected');
@@ -54,24 +67,36 @@ class Publishers extends React.Component {
     localStorage.setItem('publishers', newState);
   }
 
+  findInfoIdx(publisherName) {
+    publisherName = publisherName.replace("_", " ");
+    for (let i = 0; i < this.state.info.length; i++) {
+      if (this.state.info[i].name === publisherName) {
+        return i;
+      }
+    }
+  }
+
   updatePublishers(publisher) {
     return e => {
-      let newState = this.state.publishers;
+      let newPublState = this.state.publishers;
+      let newInfoState = this.state.info;
       if (this.state.publishers.includes(publisher)) {
-        let idx = this.state.publishers.indexOf(publisher);
-        newState.splice(idx,1);
+        let publIdx = this.state.publishers.indexOf(publisher);
+        let infoIdx = this.findInfoIdx(publisher);
+        newPublState.splice(publIdx,1);
+        newInfoState.splice(infoIdx, 1);
         e.currentTarget.classList.remove('selected');
+        this.setState({['info']: newInfoState,
+                       ['publishers']: newPublState});
       } else {
-        newState.push(publisher);
+        newPublState.push(publisher);
         e.currentTarget.classList.add('selected');
+        if (this.state.publishers.length > 0) {
+          this.fetchPublishersInfo();
+          this.setState({['publishers']: newPublState});
+        }
       }
-      this.setState({['publishers']: newState});
       this.updateLocalStorage(publisher);
-      if (this.state.publishers.length > 0) {
-        this.fetchPublishersInfo();
-      } else {
-        this.setState({['info']: []});
-      }
     };
   }
 
