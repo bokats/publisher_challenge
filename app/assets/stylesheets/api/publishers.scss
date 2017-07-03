@@ -3,6 +3,7 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 html {
   height: 100%;
+  background-color: #f1efea;
 }
 
 body {
@@ -21,18 +22,19 @@ body {
 }
 
 .select-button {
+  display: flex;
+  flex-direction: column;
   width: 120px;
-  height: 22px;
+  height: 50px;
   background-color: #287fb8;
   border: 1px solid #287fb8;
   border-radius: 3px;
   color: white;
   font-weight: bold;
   line-height: 1.5;
-  padding: 8px 12px;
+  justify-content: center;
   text-align: center;
   cursor: pointer;
-  align-self: center;
 }
 
 .selected {
@@ -40,20 +42,43 @@ body {
   border: 1px solid #0D47A1;
 }
 
+.publishers-index-container {
+  display: flex;
+  flex-direction: column;
+  color: #27374c;
+  margin-top: 30px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  height: 66px;
+  border-bottom: 1px solid #bfcad2;
+  border-top: 1px solid #bfcad2;
+  vertical-align: middle;
+  padding-left: 70px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  background-color: white;
+}
+
 .publisher-container {
   display: flex;
-  border: 1px solid red;
-  height: 300px;
+  height: 280px;
   margin-top: 25px;
-  justify-content: space-around;
+  padding-left: 70px;
   align-items: center;
+  background-color: white;
+  border-bottom: 1px solid #bfcad2;
+  border-top: 1px solid #bfcad2;
 }
 
 .publisher-info-container {
   min-height: 200px;
   display: flex;
   flex-direction: column;
-  // justify-content: space-around;
+  justify-content: center;
+  width: 480px;
 }
 
 .image {
@@ -61,8 +86,17 @@ body {
   max-height: 250px;
 }
 
+.right-image {
+  margin-left: 100px;
+}
+
+.left-image {
+  margin-right: 250px;
+}
+
 .name {
   font-weight: bold;
+  max-height: 100px;
 }
 
 ul {
@@ -70,6 +104,6 @@ ul {
   margin-left: 30px;
 }
 
-li {
+li, a {
   margin-top: 10px;
 }

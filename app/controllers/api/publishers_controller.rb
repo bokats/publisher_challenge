@@ -13,7 +13,6 @@ class Api::PublishersController < ApplicationController
               'category', 'publisher', 'published']
 
     @publishers = find_values(response.parsed_response)
-    p @publishers
   end
 
   private
@@ -156,8 +155,8 @@ class Api::PublishersController < ApplicationController
           parsed_result = "File:#{parsed_result}"
         end
       when 'owner'
-        parsed_result = parsed_result.split("<br>")
-        parsed_result = parsed_result.join(",")
+        parsed_result = parsed_result.split("<br>")[-1].split("(")[0]
+        # parsed_result = parsed_result.join(",")
       when 'url'
         parsed_result = parsed_result.split(" ")[0]
       when 'creator'
