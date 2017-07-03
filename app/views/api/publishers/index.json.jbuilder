@@ -4,7 +4,7 @@ json.array! @publishers.each do |publisher|
   json.type publisher['type']
   json.website publisher['website']
   json.launch_date publisher['launch_date']
-  json.editors publisher['editor']
+  json.editor publisher['editor']
   json.owner publisher['owner']
-  json.creators publisher['creator']
+  json.creator publisher['creator']
 end

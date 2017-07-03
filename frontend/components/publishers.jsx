@@ -17,6 +17,7 @@ class Publishers extends React.Component {
     if (localStorage.getItem('publishers')) {
       promise.then(() => this.fetchPublishersInfo());
     }
+
   }
 
   fetchPublishersInfo() {
@@ -62,28 +63,83 @@ class Publishers extends React.Component {
     };
   }
 
-  render() {
-    let result;
-    if (this.state.info.length > 0) {
-      result = this.state.info.map(publisher => {
-        let imageUrl = {
-          backgroundImage: `url(${publisher.logo})`
-        };
-        debugger;
-        return (
-          <div key={publisher.name} className='publisher-info-container'>
-            // <p>{publisher.name}</p>
-            <p className='test'></p>
-            // <p>{publisher.type}</p>
-            // <p>{publisher.website}</p>
-            // <p>{publisher.launch_date}</p>
-            // <p>{publisher.editor}</p>
-            // <p>{publisher.owner}</p>
-            // <p>{publisher.creator}</p>
+  validateData(publisher) {
+    let launchYear = publisher.launch_date.split(",")[0];
+    let creators;
+    let editors;
+    let owners;
+    let launchYearText;
+    if (publisher.creator && publisher.creator.includes(",")) {
+      creators = publisher.creator.split(",").join(" and ");
+    } else {
+      creators = publisher.creator;
+    }
+    if (publisher.editor && publisher.editor.includes(",")) {
+      editors = publisher.editor.split(",").join(" and ");
+    } else {
+      editors = publisher.editor;
+    }
+    if (publisher.owner && !publisher.owner.includes(")")) {
+      owners = publisher.owner.split(",").join(" and ");
+    } else {
+      owners = publisher.editor;
+    }
+    if (creators) {
+      launchYearText = `Launched in ${launchYear} by ${creators}`;
+    } else {
+      launchYearText = `Launched in ${launchYear}`;
+    }
+    return {
+      creators: creators,
+      editors: editors,
+      owners: owners,
+      launchYearText: launchYearText
+    };
+  }
+
+  mapPublishersToHTML() {
+    let result = this.state.info.map((publisher, idx) => {
+      let imageUrl = {
+        background: `url(${publisher.logo})`
+      };
+
+      let validatedData = this.validateData(publisher);
+
+      let publisherInfo = (
+        <div className='publisher-info-container'>
+          <p className='name'>{publisher.name} ({publisher.type})</p>
+          <ul className='publisher-list'>
+            <li>{validatedData.launchYearText}</li>
+            <li>Editor: {validatedData.editors}</li>
+            <li>Owned by {validatedData.owners}</li>
+            <li>{publisher.website}</li>
+          </ul>
+        </div>
+      );
+
+      let publisherHTML;
+      if (idx % 2 === 0) {
+        publisherHTML = (
+          <div key={publisher.name} className='publisher-container'>
+            {publisherInfo}
+            <img src={publisher.logo} className="image"></img>
           </div>
         );
-      });
-    }
+      } else {
+        publisherHTML = (
+        <div key={publisher.name} className='publisher-container'>
+          <img src={publisher.logo} className="image"></img>
+          {publisherInfo}
+        </div>
+        );
+      }
+      return publisherHTML;
+    });
+    return result;
+  }
+
+  render() {
+    let publishers = this.mapPublishersToHTML();
 
     return (
       <div>
@@ -107,7 +163,7 @@ class Publishers extends React.Component {
             onClick={this.updatePublishers('The_Verge')}>
             The Verge</div>
         </div>
-        <div>{result}</div>
+        <div>{publishers}</div>
       </div>
     );
   }

@@ -2,8 +2,7 @@ require 'byebug'
 
 class Api::PublishersController < ApplicationController
   def index
-    # publishers = params['publishers'].join("|")
-    publishers = "GeekWire|TechCrunch"
+    publishers = params['publishers'].join("|")
     url = "https://en.wikipedia.org/w/api.php?action=query&titles=#{publishers}\
     &prop=revisions&rvprop=content&format=json"
 
