@@ -24,8 +24,6 @@ class Publishers extends React.Component {
       );
     });
 
-    let localS = localStorage.getItem('publishers');
-
     if (publishers.length > 0) {
       getDataFromLS.then(() => {
         if (this.state.publishers.length > 0) {
@@ -106,6 +104,7 @@ class Publishers extends React.Component {
     let editors;
     let owners;
     let launchYearText;
+    let website;
     if (publisher.creator && publisher.creator.includes(",")) {
       creators = publisher.creator.split(",").join(" and ");
     } else {
@@ -126,11 +125,18 @@ class Publishers extends React.Component {
     } else {
       launchYearText = `Launched in ${launchYear}`;
     }
+    if (publisher.website.includes("http")) {
+      website = publisher.website;
+    } else {
+      website = `https://${publisher.website}`;
+    }
+
     return {
       creators: creators,
       editors: editors,
       owners: owners,
-      launchYearText: launchYearText
+      launchYearText: launchYearText,
+      website: website
     };
   }
 
@@ -149,10 +155,10 @@ class Publishers extends React.Component {
             <li>{validatedData.launchYearText}</li>
             <li>Editor: {validatedData.editors}</li>
             <li>Owned by {validatedData.owners}</li>
-            <li>Website: <a href={publisher.website}>{publisher.website}</a>
+            <li>Website: <a href={validatedData.website}>
+              {publisher.website}</a>
             </li>
           </ul>
-
         </div>
       );
 
@@ -182,6 +188,10 @@ class Publishers extends React.Component {
 
     return (
       <div>
+        <div className='header-container'>
+          <div className="logo-container"></div>
+          <h1>Select Publisher</h1>
+        </div>
         <div className='publisher-buttons-container'>
           <div className='select-button' id="GeekWire"
             onClick={this.updatePublishers('GeekWire')}>
@@ -203,7 +213,7 @@ class Publishers extends React.Component {
             The Verge</div>
         </div>
         <div className='publishers-index-container'>
-          <div className='header'>Publisher Mentions</div>
+          <div className='header'>Eargo Mentions</div>
           <div>{publishers}</div>
         </div>
       </div>

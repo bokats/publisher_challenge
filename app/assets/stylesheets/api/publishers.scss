@@ -4,6 +4,7 @@
 html {
   height: 100%;
   background-color: #f1efea;
+  color: #27374c;
 }
 
 body {
@@ -14,11 +15,32 @@ body {
   justify-content: center;
 }
 
+.header-container {
+  display: flex;
+  margin-top: 40px;
+  align-items: center;
+}
+
+.logo-container {
+  background-image: url(" /assets/eargo_logo.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 100px;
+  width: 200px;
+}
+
 .publisher-buttons-container {
   display: flex;
-  margin-top: 80px;
+  margin-top: 20px;
   min-width: 1000px;
   justify-content: space-between;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 22px;
+  text-align: center;
+  margin-left: 220px;
 }
 
 .select-button {
@@ -45,7 +67,6 @@ body {
 .publishers-index-container {
   display: flex;
   flex-direction: column;
-  color: #27374c;
   margin-top: 30px;
 }
 
@@ -106,4 +127,8 @@ ul {
 
 li, a {
   margin-top: 10px;
+}
+
+a:hover {
+  text-decoration: underline;
 }
