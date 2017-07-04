@@ -10,6 +10,8 @@ The program is written in Ruby on Rails and React. To run the program:
 4. Open two new terminals in the same directory and run `webpack --watch` in one and `rails server` in the other.
 5. Go to `http://localhost:3000`
 
+Note: You can also run `guard` in a third terminal window to avoid the browser console messages. This allows for automatic refresh of page in development, but it is not necessary to run the program.
+
 ### Program structure
 The general structure of the programs is it fetches information about 6 specific publishers in the backend through the Wikipedia API, sends it to the frontend, which then styles and puts the information on the page. Because the API response from is scrambled data, there is fair bit of parsing on the backend to return a cleaner JSON response to frontend. The backend has to make an additional call to the API to grab the specific logo path of the publishers. The app does not use a database and instead takes advantage of local storage because of the simplicity of the data flow.
 
