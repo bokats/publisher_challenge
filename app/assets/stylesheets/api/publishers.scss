@@ -8,7 +8,8 @@ html {
 }
 
 body {
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: Lato, "Helvetica Neue", Helvetica, Arial,
+    "Lucida Grande", sans-serif;
   font-size: 18px;
   height: 100%;
   display: flex;
@@ -22,7 +23,7 @@ body {
 }
 
 .logo-container {
-  background-image: url(" /assets/eargo_logo.png");
+  background-image: url("/assets/eargo_logo.png");
   background-repeat: no-repeat;
   background-size: contain;
   height: 100px;

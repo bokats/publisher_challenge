@@ -105,6 +105,7 @@ class Publishers extends React.Component {
     let owners;
     let launchYearText;
     let website;
+
     if (publisher.creator && publisher.creator.includes(",")) {
       creators = publisher.creator.split(",").join(" and ");
     } else {

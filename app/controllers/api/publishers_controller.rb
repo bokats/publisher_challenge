@@ -12,14 +12,13 @@ class Api::PublishersController < ApplicationController
               'launch date', 'launch_date', 'firstdate', 'author', 'founded',
               'category', 'publisher', 'published']
 
-    @publishers = find_values(response.parsed_response)
+    @publishers = parse_api_response(response.parsed_response)
   end
 
   private
 
-  def find_values(response)
+  def parse_api_response(response)
     final_result = []
-
     pages = response['query']['pages'].keys
 
     pages.each do |page|
@@ -29,34 +28,38 @@ class Api::PublishersController < ApplicationController
       @values['name'] = response['query']['pages'][page]['title']
       idx = 0
       while @values.keys.length < 8 && idx < 40
-        @items.each do |item|
-          if info_array[idx][0...item.length + 1].include?(item)
-            case item
-            when 'logo', 'image_file'
-              determine_logo(info_array, idx, item)
-            when 'type', 'category'
-              determine_type(info_array, idx)
-            when 'url', 'website'
-              determine_website(info_array, idx)
-            when 'launch_date', "launch date", "firstdate", "founded"
-              determine_launch_date(info_array, idx)
-            when 'owner', 'publisher'
-              @values['owner'] = parse_value(info_array[idx], item)
-            when 'published'
-              determine_publisher(info_array[idx])
-            when 'author'
-              determine_creator(info_array, idx)
-            when 'editor'
-              @values[item] = parse_value(info_array[idx], item)
-            end
-          end
-        end
+        find_match(info_array, idx)
         idx += 1
       end
       check_for_missing
       final_result << @values
     end
     final_result
+  end
+
+  def find_match(info_array, idx)
+    @items.each do |item|
+      if info_array[idx][0...item.length + 1].include?(item)
+        case item
+        when 'logo', 'image_file'
+          determine_logo(info_array, idx, item)
+        when 'type', 'category'
+          determine_type(info_array, idx)
+        when 'url', 'website'
+          determine_website(info_array, idx)
+        when 'launch_date', "launch date", "firstdate", "founded"
+          determine_launch_date(info_array, idx)
+        when 'owner', 'publisher'
+          @values['owner'] = parse_value(info_array[idx], item)
+        when 'published'
+          determine_publisher(info_array[idx])
+        when 'author'
+          determine_creator(info_array, idx)
+        when 'editor'
+          @values[item] = parse_value(info_array[idx], item)
+        end
+      end
+    end
   end
 
   def check_for_missing
@@ -156,15 +159,12 @@ class Api::PublishersController < ApplicationController
         end
       when 'owner'
         parsed_result = parsed_result.split("<br>")[-1].split("(")[0]
-        # parsed_result = parsed_result.join(",")
       when 'url'
         parsed_result = parsed_result.split(" ")[0]
       when 'creator'
-        parsed_result = parsed_result.split("<br />")
-        parsed_result = parsed_result.join(",")
+        parsed_result = parsed_result.split("<br />").join(",")
       end
     end
     parsed_result
   end
-
 end
