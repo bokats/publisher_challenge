@@ -13,6 +13,7 @@ class Api::PublishersController < ApplicationController
               'category', 'publisher', 'published']
 
     @publishers = parse_api_response(response.parsed_response)
+    p @publishers
   end
 
   private
@@ -150,7 +151,6 @@ class Api::PublishersController < ApplicationController
     if has_equal_sign
       parsed_result = parsed_result.split("=")[1]
       parsed_result = parsed_result[1..-1] if parsed_result[0] == " "
-
       case type
       when 'logo', 'image_file'
         parsed_result.gsub!(" ", "_")
@@ -162,7 +162,11 @@ class Api::PublishersController < ApplicationController
       when 'url'
         parsed_result = parsed_result.split(" ")[0]
       when 'creator'
-        parsed_result = parsed_result.split("<br />").join(",")
+        parsed_result = parsed_result.split("<br />")
+        if parsed_result.length > 1 && parsed_result[1].include?("<")
+          parsed_result[1] = parsed_result[1].split("<")[0]
+        end
+        parsed_result = parsed_result.join(",")
       end
     end
     parsed_result
