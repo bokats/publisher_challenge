@@ -13,7 +13,6 @@ class Api::PublishersController < ApplicationController
               'category', 'publisher', 'published']
 
     @publishers = parse_api_response(response.parsed_response)
-    p @publishers
   end
 
   private
